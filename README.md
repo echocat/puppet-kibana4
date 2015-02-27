@@ -126,7 +126,7 @@ Default: 'discover' (string).
 #####`request_timeout`
 
 Time in milliseconds to wait for responses from the back end or elasticsearch.
-# This must be > 0.
+This must be > 0.
 
 Default: 300000
 
