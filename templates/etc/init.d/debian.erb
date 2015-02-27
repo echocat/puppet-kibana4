@@ -1,0 +1,100 @@
+#!/bin/sh
+#
+# kibana4 - this script starts and stops the kibana 4 webserver
+#
+# chkconfig:   - 85 15
+# description:  Kibana is a dashboard frontend for elasticsearch 
+# processname: kibana4
+# pidfile:     <%= @pid_file %>
+
+# Source function library.
+. /lib/lsb/init-functions
+
+KIBANA_EXEC="<%= @install_dir %>/kibana4/bin/kibana"
+KIBANA_NAME="kibana"
+KIBANA_PID="<%= @pidfile %>"
+KIBANA_LOCKFILE="/var/lock/${KIBANA_NAME}"
+
+[ -x "$KIBANA_EXEC" ] || exit 5
+
+start() {
+    local retval
+
+    log_daemon_msg "Starting $KIBANA_NAME"
+    start-stop-daemon --start --quiet --pidfile "$KIBANA_PID" --retry 5 --exec "$KIBANA_EXEC" --oknodo
+
+    retval=$?
+    log_end_msg $retval
+    [ $retval -eq 0 ] && touch "$KIBANA_LOCKFILE"
+
+    return $retval
+}
+
+stop() {
+    local retval
+
+    log_daemon_msg "Stopping $KIBANA_NAME"
+    start-stop-daemon --stop --quiet --signal QUIT --pidfile "$KIBANA_PID" --retry 5 --oknodo --exec "$KIBANA_EXEC"
+
+    retval=$?
+    log_end_msg $retval
+    [ $retval -eq 0 ] && rm -f "$KIBANA_LOCKFILE"
+
+    return $retval
+}
+
+restart() {
+    stop
+    sleep 1
+    start
+}
+
+reload() {
+    local retval
+
+    log_daemon_msg "Stopping $KIBANA_NAME"
+    killproc -p"$pidfile" $KIBANA_NAME -HUP
+    start-stop-daemon --stop --quiet --signal HUP --pidfile "$KIBANA_PID" --oknodo --exec "$KIBANA_EXEC"
+
+    retval=$?
+    log_end_msg $retval
+    return $retval
+}
+
+status() {
+    local retval
+    status_of_proc -p "$KIBANA_PID" "$KIBANA_EXEC" "$KIBANA_NAME"
+    retval=$?
+    return $retval
+}
+
+status_q() {
+    status >/dev/null 2>&1
+}
+
+case "$1" in
+    start)
+        status_q && exit 0
+        start
+        ;;
+    stop)
+        status_q || exit 0
+        stop
+        ;;
+    restart|configtest|force-reload)
+        restart
+        ;;
+    reload)
+        rh_status_q || exit 7
+        reload
+        ;;
+    status)
+        status
+        ;;
+    condrestart|try-restart)
+        status_q || exit 0
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
+        exit 2
+esac
