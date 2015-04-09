@@ -4,7 +4,7 @@
 #
 
 class kibana4 (
-  $version            = '4.0.0',
+  $version            = '4.0.0-linux-x64',
   $download_path      = 'http://download.elasticsearch.org/kibana/kibana',
   $install_dir        = '/opt',
   $running            = true,
@@ -53,16 +53,16 @@ class kibana4 (
   # download/install kibana files
 
   exec { 'Download Kibana4':
-    command => "curl -s -L ${download_path}/kibana-${version}-linux-x64.tar.gz | tar xz",
+    command => "curl -s -L ${download_path}/kibana-${version}.tar.gz | tar xz",
     cwd     => $install_dir,
-    creates => "${install_dir}/kibana-${version}-linux-x64",
+    creates => "${install_dir}/kibana-${version}",
   }
 
   # symlink to kibana
 
   file { "${install_dir}/kibana4":
     ensure  => link,
-    target  => "${install_dir}/kibana-${version}-linux-x64",
+    target  => "${install_dir}/kibana-${version}",
     require => Exec['Download Kibana4']
   }
 
