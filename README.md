@@ -37,11 +37,11 @@ and expect an elasticsearch on localhost:9200
 ```
 
 This example shows how to install a specific version from your own server.
-Here we download kibana4 from `http://mymirror.my.domain/kibana/kibana-4.1.0-linux-x64.tar.gz`
+Here we download kibana4 from `http://mymirror.my.domain/kibana/kibana-4.0.2-linux-x64.tar.gz`
 
 ```puppet
   class { 'kibana4':
-    version       => '4.1.0',
+    version       => '4.0.2-linux-x64',
     download_path => 'http://mymirror.my.domain/kibana',
   }
 ```
@@ -67,7 +67,7 @@ This class downloads and configures kibana4.
 #####`version`
 
 The kibana4 version to be installed.
-Default: 4.0.0
+Default: 4.0.0-linux-x64
 
 #####`install_dir`
 
