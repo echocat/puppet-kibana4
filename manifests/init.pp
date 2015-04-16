@@ -53,6 +53,7 @@ class kibana4 (
   # download/install kibana files
 
   exec { 'Download Kibana4':
+    path    => [ '/bin', '/usr/bin', '/usr/local/bin' ],
     command => "curl -s -L ${download_path}/kibana-${version}.tar.gz | tar xz",
     cwd     => $install_dir,
     creates => "${install_dir}/kibana-${version}",
