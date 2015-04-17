@@ -3,98 +3,77 @@
 # kibana4 - this script starts and stops the kibana 4 webserver
 #
 # chkconfig:   - 85 15
-# description:  Kibana is a dashboard frontend for elasticsearch 
+# description:  Kibana is a dashboard frontend for elasticsearch
 # processname: kibana4
 # pidfile:     <%= @pid_file %>
 
-# Source function library.
+KIBANA_BIN="<%= @install_dir %>/kibana4/bin"
+
+PID_FILE="<%= @pid_file %>"
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:$KIBANA_BIN
+DAEMON=$KIBANA_BIN/kibana
+NAME=kibana4
+DESC="Kibana4"
+
+if [ `id -u` -ne 0 ]; then
+	echo "You need root privileges to run this script"
+	exit 1
+fi
+
 . /lib/lsb/init-functions
 
-KIBANA_EXEC="<%= @install_dir %>/kibana4/bin/kibana"
-KIBANA_NAME="kibana"
-KIBANA_PID="<%= @pidfile %>"
-KIBANA_LOCKFILE="/var/lock/${KIBANA_NAME}"
-
-[ -x "$KIBANA_EXEC" ] || exit 5
-
-start() {
-    local retval
-
-    log_daemon_msg "Starting $KIBANA_NAME"
-    start-stop-daemon --start --quiet --pidfile "$KIBANA_PID" --retry 5 --exec "$KIBANA_EXEC" --oknodo
-
-    retval=$?
-    log_end_msg $retval
-    [ $retval -eq 0 ] && touch "$KIBANA_LOCKFILE"
-
-    return $retval
-}
-
-stop() {
-    local retval
-
-    log_daemon_msg "Stopping $KIBANA_NAME"
-    start-stop-daemon --stop --quiet --signal QUIT --pidfile "$KIBANA_PID" --retry 5 --oknodo --exec "$KIBANA_EXEC"
-
-    retval=$?
-    log_end_msg $retval
-    [ $retval -eq 0 ] && rm -f "$KIBANA_LOCKFILE"
-
-    return $retval
-}
-
-restart() {
-    stop
-    sleep 1
-    start
-}
-
-reload() {
-    local retval
-
-    log_daemon_msg "Stopping $KIBANA_NAME"
-    killproc -p"$pidfile" $KIBANA_NAME -HUP
-    start-stop-daemon --stop --quiet --signal HUP --pidfile "$KIBANA_PID" --oknodo --exec "$KIBANA_EXEC"
-
-    retval=$?
-    log_end_msg $retval
-    return $retval
-}
-
-status() {
-    local retval
-    status_of_proc -p "$KIBANA_PID" "$KIBANA_EXEC" "$KIBANA_NAME"
-    retval=$?
-    return $retval
-}
-
-status_q() {
-    status >/dev/null 2>&1
-}
+if [ -r /etc/default/rcS ]; then
+	. /etc/default/rcS
+fi
 
 case "$1" in
-    start)
-        status_q && exit 0
-        start
-        ;;
-    stop)
-        status_q || exit 0
-        stop
-        ;;
-    restart|configtest|force-reload)
-        restart
-        ;;
-    reload)
-        rh_status_q || exit 7
-        reload
-        ;;
-    status)
-        status
-        ;;
-    condrestart|try-restart)
-        status_q || exit 0
-        ;;
-    *)
-        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
-        exit 2
+  start)
+	log_daemon_msg "Starting $DESC"
+
+	pid=`pidofproc -p $PID_FILE kibana`
+	if [ -n "$pid" ] ; then
+		log_begin_msg "Already running."
+		log_end_msg 0
+		exit 0
+	fi
+
+	# Start Daemon
+	start-stop-daemon --start --pidfile "$PID_FILE" --make-pidfile --background --exec $DAEMON
+	log_end_msg $?
+	;;
+  stop)
+	log_daemon_msg "Stopping $DESC"
+
+	if [ -f "$PID_FILE" ]; then
+		start-stop-daemon --stop --pidfile "$PID_FILE" \
+			--retry=TERM/20/KILL/5 >/dev/null
+		if [ $? -eq 1 ]; then
+			log_progress_msg "$DESC is not running but pid file exists, cleaning up"
+		elif [ $? -eq 3 ]; then
+			PID="`cat $PID_FILE`"
+			log_failure_msg "Failed to stop $DESC (pid $PID)"
+			exit 1
+		fi
+		rm -f "$PID_FILE"
+	else
+		log_progress_msg "(not running)"
+	fi
+	log_end_msg 0
+	;;
+  status)
+	status_of_proc -p $PID_FILE kibana kibana && exit 0 || exit $?
+    ;;
+  restart|force-reload)
+	if [ -f "$PID_FILE" ]; then
+		$0 stop
+		sleep 1
+	fi
+	$0 start
+	;;
+  *)
+	log_success_msg "Usage: $0 {start|stop|restart|force-reload|status}"
+	exit 1
+	;;
 esac
+
+exit 0
