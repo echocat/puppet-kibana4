@@ -1,3 +1,10 @@
+## 2015-04-17 - 1.1.1 (Bugfix release)
+
+#### Bugfixes:
+
+- Issue #1 add path parameter to curl exec specification
+- Issue #2 refactoring debian init.d script
+
 ## 2015-04-09 - 1.1.0 (Feature release)
 
 #### Features:
