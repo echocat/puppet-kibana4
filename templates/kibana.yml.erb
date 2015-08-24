@@ -4,6 +4,12 @@ port: <%= @port %>
 # The host to bind the server to.
 host: "<%= @host %>"
 
+# The location of log files:
+# log_file: ./kibana.log
+<% if @log_file -%>
+log_file: <%= @log_file %>
+<%- end -%>
+
 # The Elasticsearch instance to use for all your queries.
 elasticsearch_url: "<%= @elasticsearch_url %>"
 
