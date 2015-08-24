@@ -7,6 +7,7 @@ class kibana4 (
   $version            = '4.0.0-linux-x64',
   $download_path      = 'http://download.elasticsearch.org/kibana/kibana',
   $install_dir        = '/opt',
+  $log_file           = './kibana.log',
   $running            = true,
   $enabled            = true,
   $port               = 5601,

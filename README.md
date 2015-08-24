@@ -164,6 +164,10 @@ Default: '' (empty string)
 
 Default: '/var/run/kibana.pid' (string)
 
+#####`log_file`
+
+Default: './kibana.log' (string)
+
 #####`bundled_plugin_ids`
 
 Enable or disable the appendonly file option. 
