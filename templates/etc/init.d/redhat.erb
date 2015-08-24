@@ -23,6 +23,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 prog=kibana4
 DAEMON=<%= @install_dir %>/kibana4/bin/kibana
 DAEMON_ARGS=""
+KIBANA_USER="RUNASIS"
 pidfile=<%= @pid_file %>
 lockfile=/var/lock/subsys/$prog
 
@@ -31,10 +32,24 @@ lockfile=/var/lock/subsys/$prog
 [ -e /etc/default/$prog ] && . /etc/default/$prog
 [ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
 
+# For SELinux we need to use 'runuser' not 'su'
+if [ -x /sbin/runuser ]
+then
+    SU=runuser
+else
+    SU=su
+fi
+
+if [ "$KIBANA_USER" = "RUNASIS" ]; then
+    SUBIT=""
+else
+    SUBIT="$SU - $KIBANA_USER -s /bin/sh -c "
+fi
+
 start()
 {
     echo -n $"Starting $prog: "
-    nohup $DAEMON $DAEMON_ARGS </dev/null >/dev/null 2>&1 &
+    nohup $SUBIT $DAEMON $DAEMON_ARGS </dev/null >/dev/null 2>&1 &
     retval=$?
     if [ rh_status_q ]; then
         touch $lockfile
