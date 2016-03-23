@@ -1,3 +1,8 @@
+## 2016-03-24 - 1.2.0 (Feature release)
+
+- Allow to specify the log file location
+- Alter the RedHat init script, so we can use a seperate user
+
 ## 2015-04-17 - 1.1.1 (Bugfix release)
 
 #### Bugfixes:

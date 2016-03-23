@@ -14,10 +14,12 @@
 
 ##Overview
 
-Kibana 4 is a dashboard for [Elasticsearch](http://www.elasticsearch.org/overview/elkdownloads/)
+Kibana 4 is a dashboard for [Elasticsearch](https://www.elastic.co/products/elasticsearch)
 This module downloads Kibana 4 and configures it be used with elasticsearch.
 
-Github Master: [![Build Status](https://secure.travis-ci.org/echocat/puppet-kibana4.png?branch=master)](https://travis-ci.org/echocat/puppet-kibana4)
+[![Puppet Forge](http://img.shields.io/puppetforge/v/echocat/kibana4.svg)](https://forge.puppetlabs.com/echocat/kibana4)
+[![Build Status](https://secure.travis-ci.org/echocat/puppet-kibana4.png?branch=master)](https://travis-ci.org/echocat/puppet-kibana4)
+[![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/echocat/kibana4.svg)](https://forge.puppetlabs.com/echocat/kibana4)
 
 ##Setup
 
