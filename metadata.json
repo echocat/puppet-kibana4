@@ -4,7 +4,7 @@
   "author": "Daniel Werdermann",
   "summary": "Install and configure Kibana 4",
   "license": "MPL-2.0",
-  "source": "git clone https://github.com/echocat/puppet-kibana4.git",
+  "source": "https://github.com/echocat/puppet-kibana4.git",
   "project_page": "https://github.com/echocat/puppet-kibana4",
   "issues_url": "https://github.com/echocat/puppet-kibana4/issues",
   "operatingsystem_support": [
